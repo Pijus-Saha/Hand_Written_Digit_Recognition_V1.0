@@ -12,12 +12,16 @@ def preprocess_image(image):
     image = image.resize((28, 28))  # Resize to MNIST format
     image = np.array(image)
 
-    # Invert colors if the background is black
-    if np.mean(image) < 128:
+    # Apply adaptive threshold to binarize
+    threshold = 200
+    image = np.where(image > threshold, 255, 0).astype(np.uint8)
+
+    # Invert if digit is black on white
+    if np.mean(image) > 127:
         image = 255 - image
-    
-    image = image / 255.0  # Normalize pixel values
-    image = image.reshape(1, 28, 28, 1)  # CNN input shape
+
+    image = image / 255.0  # Normalize
+    image = image.reshape(1, 28, 28, 1)  # CNN input
     return image
 
 # Streamlit UI
